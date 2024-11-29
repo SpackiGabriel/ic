@@ -147,7 +147,16 @@ def velocity(
     return w * v + c1 * r1 * (best_position - position) + c2 * r2 * (swarm_best_position - position)
 
 
-def pso(p, qe, obj_func=langmuir, part_n=100, iter_n=100, param_min_max=[[0, 10], [1, 100], [1, 2]], comp_n=1, relative=False):
+def pso(
+    p, 
+    qe, 
+    obj_func=langmuir, 
+    part_n=100, 
+    iter_n=100, 
+    param_min_max=[[0, 10], [1, 100], [1, 2]], 
+    comp_n=1, 
+    relative=False
+):
     
     # Lista para armazenar todas as partículas do enxame.
     particles_list = []
