@@ -58,7 +58,7 @@ def sips(p, qe, param, relative=False):
             qmax = param[0]
             b = param[1]
             nS = param[2]
-            over = param[0] * (b * p[i]) ** (1 / nS)
+            over = qmax * (b * p[i]) ** (1 / nS)
             under = 1 + (b * p[i]) ** (1 / nS)
             value = over / under
             if relative:
