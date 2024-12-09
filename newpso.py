@@ -1,62 +1,14 @@
 import random
 import numpy as np
 from monocomponent_isotherms import langmuir
+import time
 
 
 class Particle:
     def __init__(self, param_min_max: list) -> None:
-        
-        """
-        Inicializa a posição da partícula com valores aleatórios dentro dos limites fornecidos.
 
-        - param_min_max[]: Lista de listas com os valores mínimos e máximos para cada parâmetro.
-        - min_max[]: Cada min_max representa um intervalo [min, max]. Aqui, min_max[0] é o limite inferior (min), e min_max[1] é o limite superior (max).
-        - min_max[0] + random.random() * (min_max[1] - min_max[0]):
-            -> (min_max[1] - min_max[0]): Calcula a amplitude do intervalo.
-            -> random.random() * (min_max[1] - min_max[0]): Gera um valor proporcional à amplitude, escalado para o intervalo [0, amplitude)
-            -> min_max[0] + ...: Desloca o valor gerado para o intervalo [min, max)
-            
-        Exemplo:
-        
-        param_min_max = 
-            [
-                [0, 10], [1, 5], [2, 8],
-            ],
-
-        Para cada min_max em param_min_max[0]:
-
-        -> 1
-            min_max[0] = 0
-            min_max[1] = 10 
-            
-            min_max[1] - min_max[0] = 10 - 0 = 10
-            random.random() * (10) = 0.5 * 10 = 5
-            min_max[0] + 5 = 0 + 5 = 5
-        
-        -> 2
-            min_max[0] = 1
-            min_max[1] = 5 
-            
-            min_max[1] - min_max[0] = 5 - 1 = 4
-            random.random() * (4) = 0.5 * 4 = 2
-            min_max[0] + 2 = 1 + 2 = 3
-        
-        -> 3
-            min_max[0] = 2
-            min_max[1] = 8
-            
-            min_max[1] - min_max[0] = 8 - 2 = 6
-            random.random() * (6) = 0.5 * 6 = 3
-            min_max[0] + 3 = 2 + 3 = 5
-        
-        Então:
-        
-        self.position = np.array([5, 3, 5])
-        """
-        
-        self.position: list = np.array(
-            [min_max[0] + random.random() * (min_max[1] - min_max[0]) for min_max in param_min_max]
-        )
+        self.array = np.array([min_max[0] + random.random() * (min_max[1] - min_max[0]) for min_max in param_min_max])
+        self.position: list = self.array
 
         # Inicializar a velovidade da partícula como um vetor nulo.
         self.velocity: float = np.zeros_like(self.position)
@@ -78,7 +30,7 @@ def velocity(
     particle: Particle,
     swarm_best_position: list
 ) -> float:
-    
+
     # Gera dos números aleatórios entre 0 e 1 para os fatores de aprendizado.
     r1: float = random.random()
     r2: float = random.random()
@@ -88,76 +40,20 @@ def velocity(
     best_position: list = particle.best_position
     position: list = particle.position
 
-    """
-    Calcula a nova velocidade com base na equação do PSO.
-    
-    - w * v: Componente de inércia
-     -> w: Fator de inércia. Controla o peso da velocidade atual na nova velocidade.
-     -> V: Velocidade atual da partícula.
-    
-    Efeito: Mantém a partícula "em movimento", aproveitando sua tendência anterior
-     - Valores altos de w favorecem a exploração (movimento maior)
-     - Valor baixos de w favorecem a exploração local (movimento menor)
-
-    ----------
-    
-    c1 * r1 * (best_position - position): Compopnente Cognitivo
-    
-    - c1: Constante de aprendizado individual. Define o quanto a partícula confia na sua melhor posição pessoal.
-    - r1: Número aleatório entre 0 e 1. Introduz variabilidade ao movimento.
-    - best_position - position: Vetor que aponta da posição atual para a melhor posição individual encontrada pela partícula
-    
-    Efeito: Faz a partícula se mover em direção à sua própria experiência (melhor posição pessoal).
-    
-    ----------
-    
-    c2 * r2 * (swarm_best_position - position): Componente Social
-    
-    - c2: Constante de aprendizado social. Define o quanto a partícula confia na melhor posição do enxame.
-    - r2: Número aleatório entre 0 e 1. Assim como r1, introduz variabilidade.
-    - swarm_best_position - position: Vetor que aponta da posição atual para a melhor posição global encontrada pelo enxame.
-
-    Efeito: Faz a partícula se mover em direção à melhor solução global, baseada na colaboração do grupo.
-    
-    ----------
-    
-    Exemplo:
-    
-    w = 0.5, c1 = 1.5, c2 = 1.5
-    v = [2, -1]
-    position = [3, 4]
-    best_position = [5, 3]
-    swarm_best_position = [6, 2]
-    r1 = 0.8, r2 = 0.4
-    
-    Componente de inércia: 
-    w * v = 0.5 * [2, -1] = [1, -0.5]
-    
-    Fator cognitivo:
-    c1 * r1 * (best_position - position)
-     -> best_position - position = [5, 3] - [3, 4] = [2, -1]
-     -> 1.5 * 0.8 * [2, -1] = [2.4, -1.2]
-    
-    c2 * r2 * (swarm_best_position - position)
-     -> swarm_best_position - position = [6, 2] - [3, 4] = [3, -2]
-     -> 1.5 * 0.4 * [3, -2] = [1.8, -1.2]
-    
-    velocity = [1, -0.5] + [2.4, -1.2] + [1.8, -1.2] = [5.2, -2.9]
-    """
     return w * v + c1 * r1 * (best_position - position) + c2 * r2 * (swarm_best_position - position)
 
 
 def pso(
-    p, 
-    qe, 
-    obj_func=langmuir, 
-    part_n=100, 
-    iter_n=100, 
-    param_min_max=[[0, 10], [1, 100], [1, 2]], 
-    comp_n=1, 
+    p,
+    qe,
+    obj_func=langmuir,
+    part_n=100,
+    iter_n=100,
+    param_min_max=[[0, 10], [1, 100], [1, 2]],
+    comp_n=1,
     relative=False
 ):
-    
+
     # Lista para armazenar todas as partículas do enxame.
     particles_list = []
 
@@ -203,10 +99,10 @@ def pso(
             # Atualiza a velocidade da partícula.
             v = velocity(w, c1, c2, particle, swarm_best_position)
             particle.velocity = v
-            
+
             # Atualiza a posição da partícula.
             particle.position += v
-            
+
             # Avalia o fitness da nova posição.
             fitness = obj_func(p, qe, particle.position, relative)
             particle.fitness = fitness
@@ -223,3 +119,18 @@ def pso(
 
     # Retorna a melhor posição e o melhor fitness encontrados.
     return swarm_best_position, swarm_best_fitness
+
+start_time = time.time()
+teste = pso(
+    [0.271004,1.44862,2.70512,3.94841,5.13112,6.61931,8.60419,11.0863,13.5677,16.068,18.5552,21.0393,23.5223,26.0124,28.4806,30.9418,33.4053,35.8564,38.3088,40.7621,42.843,43.8868,44.409],
+    [0.905796,1.98353,2.35874,2.5484,2.67333,2.7765,2.88334,2.9774,3.04683,3.09766,3.14708,3.17517,3.2241,3.24116,3.2549,3.26587,3.27946,3.28687,3.28825,3.28971,3.30512,3.30683,3.30725,],
+    obj_func=langmuir,
+    part_n=100000,
+    iter_n=100,
+    param_min_max=[[0, 10], [1, 100]],
+    comp_n=1,
+    relative=False
+)
+end_time = time.time()
+print(f"Tempo de execução do PSO na CPU: {end_time - start_time:.5f} segundos")
+print(teste)
