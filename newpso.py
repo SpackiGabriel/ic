@@ -1,6 +1,6 @@
 import random
 import numpy as np
-from monocomponent_isotherms import langmuir
+from coiso.monocomponent_isotherms import langmuir
 import time
 
 

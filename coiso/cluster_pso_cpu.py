@@ -181,9 +181,9 @@ def hierarchical_pso(
         best_particles.append((best_position, best_fitness))
 
     # Print the best particles from each subinterval.
-    print("Melhores partículas globais de cada subintervalo:")
-    for i, (pos, fit) in enumerate(best_particles):
-        print(f"Subintervalo {i + 1}: Melhor posição: {pos}, Fitness: {fit}")
+    # print("Melhores partículas globais de cada subintervalo:")
+    # for i, (pos, fit) in enumerate(best_particles):
+    #    print(f"Subintervalo {i + 1}: Melhor posição: {pos}, Fitness: {fit}")
 
     # Extract the positions of the best particles for the second round.
     global_positions = [pos for pos, _ in best_particles]
@@ -215,7 +215,7 @@ result = hierarchical_pso(
     iter_n=100,
     param_min_max=[[0, 10000], [1, 10000]],
     comp_n=2,
-    divisions=10,
+    divisions=5,
     relative=False
 )
 end_time = time.time()

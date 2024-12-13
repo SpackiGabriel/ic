@@ -47,6 +47,7 @@ void update_velocity_position(double *position, double *velocity,
 }
 """
 
+
 # Compilar o kernel
 pso_kernel = cp.RawKernel(kernel_code, 'update_velocity_position')
 
