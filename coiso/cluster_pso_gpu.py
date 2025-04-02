@@ -6,26 +6,36 @@ from itertools import product
 # Kernel para atualizar velocidade, posição e fitness
 kernel_code = """
 extern "C" __global__
-void update_velocity_position(double *position, double *velocity, 
-                              double *personal_best, double *global_best, 
-                              double *fitness, double *personal_best_fitness, 
-                              double *r1, double *r2, double w, double c1, double c2, 
-                              int n_particles, int dim, int n_points, double *p, double *q) {
+void update_velocity_position(
+    double *position, 
+    double *velocity, 
+    double *personal_best, 
+    double *global_best, 
+    double *fitness, 
+    double *personal_best_fitness, 
+    double *r1, 
+    double *r2, 
+    double w, 
+    double c1, 
+    double c2, 
+    int n_particles, 
+    int dim, 
+    int n_points, 
+    double *p, 
+    double *q
+) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
+
     if (idx < n_particles * dim) {
+
         int particle_idx = idx / dim;
         int dim_idx = idx % dim;
         int pos = particle_idx * dim + dim_idx;
 
-        // Atualizar velocidade
-        velocity[pos] = w * velocity[pos] 
-                      + c1 * r1[pos] * (personal_best[pos] - position[pos])
-                      + c2 * r2[pos] * (global_best[dim_idx] - position[pos]);
+        velocity[pos] = w * velocity[pos] + c1 * r1[pos] * (personal_best[pos] - position[pos]) + c2 * r2[pos] * (global_best[dim_idx] - position[pos]);
 
-        // Atualizar posição
         position[pos] += velocity[pos];
 
-        // Avaliar fitness com base na função de Langmuir
         if (dim_idx == 0) {
             double qmax = position[particle_idx * dim];
             double b = position[particle_idx * dim + 1];
@@ -34,9 +44,9 @@ void update_velocity_position(double *position, double *velocity,
                 double q_calc = (qmax * b * p[i]) / (1.0 + b * p[i]);
                 fit += (q[i] - q_calc) * (q[i] - q_calc);
             }
+
             fitness[particle_idx] = fit;
 
-            // Atualizar melhor posição pessoal
             if (fit < personal_best_fitness[particle_idx]) {
                 personal_best_fitness[particle_idx] = fit;
                 for (int d = 0; d < dim; ++d) {
@@ -125,7 +135,7 @@ def hierarchical_pso(
     subinterval_combinations = list(product(*divided_intervals))
 
     # Store the best particles from each subinterval
-    best_particles = []
+    best_particles = []rr
 
     for subinterval in subinterval_combinations:
         #print(f"Subintervalo atual: {subinterval}")
