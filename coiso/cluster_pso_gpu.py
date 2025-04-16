@@ -135,7 +135,7 @@ def hierarchical_pso(
     subinterval_combinations = list(product(*divided_intervals))
 
     # Store the best particles from each subinterval
-    best_particles = []rr
+    best_particles = []
 
     for subinterval in subinterval_combinations:
         #print(f"Subintervalo atual: {subinterval}")
