@@ -20,3 +20,8 @@
     - Clean Code na veia
     - Testes unitários são legais
     - Implementar a função objetivo como parâmetro
+
+- **Pesquisar no WOS**:
+    - Palavras chaves: PSO AND BENCHMARK
+    - Organizar por mais citados
+    - Pode filtrar por 2024 - 2025
